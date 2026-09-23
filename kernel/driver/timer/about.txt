@@ -1,0 +1,8 @@
+###################
+ABOUT TIMER DRIVER
+###################
+
+timer is a simple timer driver...
+very simple
+
+last about upd: 20/09/26

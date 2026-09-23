@@ -1,0 +1,1 @@
+this bin folder contains programs that are compiled togeret with the kernel

@@ -1,0 +1,11 @@
+###################
+ABOUT PSh
+###################
+
+PSh is a primitive shell, having only the most basic features.
+Made to test the tgkkey driver.
+It's also the first actual program made for Tawagoto.
+
+made before physical memory alloc
+
+last about upd: 20/09/26 

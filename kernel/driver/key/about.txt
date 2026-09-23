@@ -1,0 +1,7 @@
+###################
+ABOUT TGKKEY DRIVER
+###################
+
+tgkkey is a simple ps/2 keyboard driver, includes the most basic keyboard utilities
+
+last about upd: 20/09/26
