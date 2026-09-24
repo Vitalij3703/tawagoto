@@ -23,3 +23,10 @@ void vmeminit(multiboot_info_t* info) {
     enablepaging(page_direc);
 }
 
+_uint32 map_page(_uint32 paddr, _uint32 vaddr, _uint16 flags) {
+    _uint32* table = &page_direc[vaddr >> 22];
+    _uint32* index = &table[(vaddr>>12) & 0x3FF];
+    *index = entry(paddr, flags);
+    asm volatile ("invlpg %0\n\t"::"m"(vaddr));
+    return vaddr;
+}

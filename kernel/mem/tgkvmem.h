@@ -10,6 +10,6 @@ static _uint32* page_direc;
 
 void vmeminit(multiboot_info_t* info);
 
-_uint32 mmap(_uint bytes, _uint flags);
+_uint32 map_page(_uint32 paddr, _uint32 vaddr, _uint16 flags);
 
 #endif

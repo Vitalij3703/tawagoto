@@ -8,6 +8,7 @@
 #include "tty/tty.h"
 #include "tgkernel.h"
 #include "mem/tgkmem.h"
+#include "mem/tgkvmem.h"
 
 // commands:
 //  echo [args] : output args 
@@ -91,6 +92,13 @@ void exec(char* cmd) {
         }
         tgkfreepages(pages[0], 100);
         ttyputchars("\ndone\n");
+        return;
+    }
+    else if(strcmp("test_virtual", args[0]) == 0) {
+        ttyputchars("testing virtual memory\n");
+        char* test = "success\n\0";
+        map_page((_uint32)test, 0x800000, 0x003);
+        ttyputchars((char*)0x800000);
         return;
     }
     else {
