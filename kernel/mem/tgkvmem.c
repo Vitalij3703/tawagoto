@@ -7,7 +7,7 @@
 #include "boot/multiboot.h"
 #include "tglib/tgtype.h"
 
-extern void enablepaging(/*_uint32* pd*/);
+extern void enablepaging(_uint32* pd);
 
 void vmeminit(multiboot_info_t* info) {
     page_direc = (_uint32*)tgkallocpage();
@@ -20,6 +20,6 @@ void vmeminit(multiboot_info_t* info) {
         page_direc[i] = entry(page_table, 0x003);
     }
     
-    enablepaging(/*page_direc*/);
+    enablepaging(page_direc);
 }
 
