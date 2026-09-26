@@ -22,8 +22,13 @@ void vmeminit(multiboot_info_t* info) {
 }
 
 _uint32 map_page(_uint32 paddr, _uint32 vaddr, _uint16 flags) {
-    _uint32* table = &page_direc[vaddr >> 22];
-    _uint32* index = &table[(vaddr>>12) & 0x3FF];
+    _uint32* direc = &page_direc[vaddr >> 22];
+    if(!(*direc & (1 << 31))){
+        _uint32* nap = (_uint32*)tgkallocpage();
+        direc = nap;
+        page_direc[vaddr>>22] = entry(nap, 0x003);
+    }
+    _uint32* index = &(direc[(vaddr>>12) & 0x3FF]);
     *index = entry(paddr, flags);
     asm volatile ("invlpg %0\n\t"::"m"(vaddr));
     return vaddr;
