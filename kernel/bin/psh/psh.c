@@ -9,13 +9,14 @@
 #include "tgkernel.h"
 #include "mem/tgkmem.h"
 #include "mem/tgkvmem.h"
+#include "mem/tgkheap.h"
 
 // commands:
 //  echo [args] : output args 
 //  test : output a test message
 //  help : print this message
 
-#define HMSG "commands:\n\techo [args] : output args\n\ttest : output a test message\n\ttest_wait : test the timer driver\n\ttest_bit : test physical mem alloc\n\ttest_virtual : test virtual memory mappings\n\tclear : clear the screen\n\thelp : output this message"
+#define HMSG "commands:\n\techo [args] : output args\n\ttest : output a test message\n\ttest_wait : test the timer driver\n\ttest_bit : test physical mem alloc\n\ttest_virtual : test virtual memory mappings\n\ttest_malloc : test kmalloc() and kmfree()\n\tclear : clear the screen\n\thelp : output this message"
 
 void exec(char* cmd) {
     if(*cmd == 0)
@@ -100,6 +101,15 @@ void exec(char* cmd) {
         map_page((_uint32)test, 0x800000, 0x003);
         ttyputchars((char*)0x800000);
         ttyputchars("\ndone\n");
+        return;
+    }
+    else if(strcmp("test_malloc", args[0]) == 0) {
+        ttyputchars("testing memory heap allocation\n");
+        char* str = kmalloc(67);
+        char addr[13]; its((int)str, addr);
+        char size[13]; its(strlen(str), size);
+        ttyputcharsf("address: %\nsize: %\n", addr, size);
+        ttyputchars("done\n");
         return;
     }
     else {

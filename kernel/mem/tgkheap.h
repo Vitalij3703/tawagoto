@@ -3,7 +3,7 @@
 #include "mem/tgkmem.h"
 #include "tglib/tgtype.h"
 
-struct heapblock {
+static struct heapblock {
     struct heapblock* next;
     _uint32 size;
     _uint8 free;

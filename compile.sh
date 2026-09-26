@@ -16,6 +16,7 @@ i686-elf-gcc -c ../kernel/tgkgdt.c -I ../kernel/ -o tgg.o -std=gnu99 -ffreestand
 i686-elf-gcc -c ../kernel/tgkidt.c -I ../kernel/ -o tgi.o -std=gnu99 -ffreestanding -O0 -Wall -Wextra -g
 i686-elf-gcc -c ../kernel/mem/tgkmem.c -I ../kernel/ -o tgm.o -std=gnu99 -ffreestanding -O0 -Wall -Wextra -g
 i686-elf-gcc -c ../kernel/mem/tgkvmem.c -I ../kernel/ -std=gnu99 -ffreestanding -O0 -Wall -Wextra -g
+i686-elf-gcc -c ../kernel/mem/tgkheap.c -I ../kernel/ -std=gnu99 -ffreestanding -O0 -Wall -Wextra -g
 i686-elf-gcc -c ../kernel/tty/tty.c -I ../kernel/ -std=gnu99 -ffreestanding -O0 -Wall -Wextra -g
 pwd
 for f in ../kernel/driver/*/*.c; do
