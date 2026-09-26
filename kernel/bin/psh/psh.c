@@ -109,6 +109,7 @@ void exec(char* cmd) {
         char addr[13]; its((int)str, addr);
         char size[13]; its(strlen(str), size);
         ttyputcharsf("address: %\nsize: %\n", addr, size);
+        kmfree(str);
         ttyputchars("done\n");
         return;
     }
