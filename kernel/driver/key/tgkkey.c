@@ -198,25 +198,30 @@ void _tgkkpk(int inum) {
 void _tgkekd() { 
     // look up ps2 commands
     ttyputchars(":- enabling ps2 keyboard driver (tgkkey init)\n");
-    
+    ttyputchar('0');
     _uint8 cfg;
     while (inb(0x64) & 0x01)
         inb(0x60);
+    ttyputchar('1');
     while(inb(0x64) & 0x02);
     outb(0x64, 0x20); // read config
+    ttyputchar('2');
     while (!(inb(0x64) & 0x01));
     cfg = inb(0x60);
     cfg |= 0x40;
+    ttyputchar('3');
     while(inb(0x64) & 0x02);
     outb(0x64, 0x60); // write config
+    ttyputchar('4');
     while(inb(0x64) & 0x02);
     outb(0x60, cfg);
+    ttyputchar('5');
     while(inb(0x64) & 0x02);
     outb(0x60, 0xF4); // enable keyboard scan codes
+    ttyputchar('6');
     while(inb(0x64) & 0x01)
         inb(0x60);
-    ttyputchars(":- enabled ps2 keyboard driver (tgkkey init end)\n");
-
+    ttyputchars("\n:- enabled ps2 keyboard driver (tgkkey init end)\n");
 }
 
 char kkgetchar() {

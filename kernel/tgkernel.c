@@ -59,8 +59,6 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     ttyputcharsf("tawagoto kernel v%\n\tby solez\n", ver);
     ttyputcharsf(":- mem %MiB\n", mem);
     ttyputchars(":- init tty\n");
-    vmeminit(mbi);
-    ttyputchars(":- virtual mem init\n");
     asm volatile ("cli");
     char str[13]; its(123, str);
     ttyputcharsf(":- 123 in string form is '%'\n", str);
@@ -68,6 +66,8 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     ttyputchars(":- init interrupts\n");
     _tgkinitgdt();
     ttyputchars(":- init gdt\n");
+    vmeminit(mbi);
+    ttyputchars(":- virtual mem init\n");
     ttyputchars(":- init done\n");
     asm volatile ("sti");
     fbclear();

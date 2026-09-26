@@ -147,7 +147,6 @@ void _tgkinitidt() {
    outb(0x43, 0x34);
    outb(0x40, div & 0xFF);
    outb(0x40, div >> 8);
-    _tgkekd();
     static struct idt_ptr ptr;
     ptr.limit = sizeof(f) - 1;
     ptr.base = (_uint32)&f;
@@ -155,6 +154,6 @@ void _tgkinitidt() {
     _uint8 mask = inb(PIC1D);
     mask = mask & ~0x03;
     outb(PIC1D, mask);
-    asm volatile("sti");
-    tinit(&test);
+   _tgkekd();
+   tinit(&test);
 }
