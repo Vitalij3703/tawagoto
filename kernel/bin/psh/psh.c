@@ -15,7 +15,7 @@
 //  test : output a test message
 //  help : print this message
 
-#define HMSG "commands:\n\techo [args] : output args\n\ttest : output a test message\n\ttest_wait : test the timer driver\n\ttest_bit : test physical mem alloc\n\tclear : clear the screen\n\thelp : output this message"
+#define HMSG "commands:\n\techo [args] : output args\n\ttest : output a test message\n\ttest_wait : test the timer driver\n\ttest_bit : test physical mem alloc\n\ttest_virtual : test virtual memory mappings\n\tclear : clear the screen\n\thelp : output this message"
 
 void exec(char* cmd) {
     if(*cmd == 0)
@@ -99,6 +99,7 @@ void exec(char* cmd) {
         char* test = "success\n\0";
         map_page((_uint32)test, 0x800000, 0x003);
         ttyputchars((char*)0x800000);
+        ttyputchars("\ndone\n");
         return;
     }
     else {
