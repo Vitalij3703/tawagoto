@@ -11,5 +11,6 @@
 #define _uint16 uint16_t
 #define _uint8  uint8_t
 #define _uint64 uint64_t
+#define NULL    (void*)0
 
 #endif
