@@ -107,7 +107,7 @@ void exec(char* cmd) {
         ttyputchars("testing memory heap allocation\n");
         char* str = kmalloc(67);
         char addr[13]; its((int)str, addr);
-        char size[13]; its(strlen(str), size);
+        char size[13]; its(sizeof(str), size);
         ttyputcharsf("address: %\nsize: %\n", addr, size);
         kmfree(str);
         ttyputchars("done\n");
