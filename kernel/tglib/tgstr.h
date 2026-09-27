@@ -10,5 +10,6 @@ void strcat(char* dest, char* src); // append src onto dest
 int strchr(char* s, char c); // find first char c in string s, returns the index
 int strrchr(char* s, char c); // find last char c in string s, returns the index
 void strrvr(char* s); // reverse a string
+void memset(_uint8* buf, _uint8 byte, _uint bytes);
 
 #endif

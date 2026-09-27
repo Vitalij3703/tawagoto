@@ -88,3 +88,8 @@ void strrvr(char* s) {
         end--;
     }
 }
+
+void memset(_uint8* buf, _uint8 byte, _uint bytes) {
+    for (_uint i = 0; i < bytes; i++)
+        buf[i] = byte;
+}
