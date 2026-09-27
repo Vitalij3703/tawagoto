@@ -1,6 +1,6 @@
 #include "tgkgdt.h"
 
-#define GDTE 3
+#define GDTE 5
 
 void _tgkinitgdt() {
     asm volatile("cli");
@@ -26,9 +26,25 @@ void _tgkinitgdt() {
     kd.access      = 0x92;
     kd.gran        = 0xCF;
     kd.base_high   = 0x00;
+    struct gdt_entry uc;
+    uc.limit_low   = 0xFFFF;
+    uc.base_low    = 0x0000;
+    uc.base_mid    = 0x00;
+    uc.access      = 0xFA;
+    uc.gran        = 0xCF;
+    uc.base_high   = 0x00;
+    struct gdt_entry ud;
+    ud.limit_low   = 0xFFFF;
+    ud.base_low    = 0x0000;
+    ud.base_mid    = 0x00;
+    ud.access      = 0xF2;
+    ud.gran        = 0xCF;
+    ud.base_high   = 0x00;
     gdt[0] = null;
     gdt[1] = kc;
     gdt[2] = kd;
+    gdt[3] = uc;
+    gdt[4] = ud;
     static struct gdt_ptr ptr;
     ptr.limit = sizeof(gdt) - 1;
     ptr.base = (_uint32)&gdt;
