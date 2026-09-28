@@ -44,6 +44,22 @@ flush_tss:
 	mov ax, (5 * 8) | 0
 	ltr ax
 	ret
+test_user:
+    cli
+global enter_usr
+enter_usr:
+    mov ax, (4*8)|3
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov eax, esp
+    push (4*8)|3
+    push eax
+    pushf
+    push (3*8)|3
+    push test_user
+    iret
 global stack_top
 global stack_bottom
 section .bss
