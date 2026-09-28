@@ -37,6 +37,13 @@ enablepaging:
     mov cr0, eax
     pop ebp
     ret
+global flush_tss
+flush_tss:
+	mov ax, (5 * 8) | 0
+	ltr ax
+	ret
+global stack_top
+global stack_bottom
 section .bss
 align 16
 stack_bottom:
