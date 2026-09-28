@@ -11,10 +11,13 @@ extern void enablepaging(_uint32* pd);
 
 void vmeminit(multiboot_info_t* info) {
     page_direc = (_uint32*)tgkallocpage();
+    int flag = 0x003;
     for (int i = 0; i < 1024; i++) {
-        _uint32* page_table = (_uint32*)tgkallocpage();;
-        for (int ii = 0; ii < 1024; ii++)
-            page_table[ii] = entry((i*1024+ii)*PAGESIZE, 0x003);
+        _uint32* page_table = (_uint32*)tgkallocpage();
+        for (int ii = 0; ii < 1024; ii++) {
+            if((i*1024+ii)*PAGESIZE > 0x3FFFFFFF) flag = 0x007;
+            page_table[ii] = entry((i*1024+ii)*PAGESIZE, flag);
+        }
         page_direc[i] = entry(page_table, 0x003);
     }
     
