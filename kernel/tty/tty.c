@@ -35,7 +35,7 @@ void fbinit(multiboot_info_t* info) {
     cccol = 0;
     max_char_col = width/8;
     max_char_row = height/8;
-    bg_color = 0;
+    bg_color = 0x0000FF;
     fg_color = 0xFFFFFF;
     //for (int i = 0; i < height; i++) // for testing
     //    for (int ii = 0; ii < width; ii++)
