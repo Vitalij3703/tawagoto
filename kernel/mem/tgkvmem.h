@@ -7,6 +7,19 @@
 #define DEFAULT_USER 0x007
 #define DEFAULT_ROOT 0x003
 
+#define PRESENT 0x001
+#define WRITABLE 0x002
+#define USER 0x004
+#define WRITE_TRU 0x008
+#define NO_CACHE 0x010
+#define ACCESSED 0x020
+#define DIRTY 0x040
+#define PAT 0x080
+#define GLOBAL 0x100
+#define AVL1 0x200
+#define AVL2 0x400
+#define AVL3 0x800
+
 static _uint32* page_direc;
 
 #define entry(addr, flags) (((_uint32)addr & ~0xFFF) | flags)

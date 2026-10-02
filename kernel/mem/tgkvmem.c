@@ -26,7 +26,7 @@ void vmeminit(multiboot_info_t* info) {
 
 _uint32 map_page(_uint32 paddr, _uint32 vaddr, _uint16 flags) {
     _uint32* direc = &page_direc[vaddr >> 22];
-    if(!(*direc & (1 << 31))){
+    if(!(*direc & 1)){
         _uint32* nap = (_uint32*)tgkallocpage();
         direc = nap;
         page_direc[vaddr>>22] = entry(nap, flags);
