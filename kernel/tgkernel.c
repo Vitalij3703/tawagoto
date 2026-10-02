@@ -15,8 +15,32 @@
 #include "bin/psh/psh.h"
 #include "tty/tty.h"
 
-extern void enter_usr(void);
 extern void test_user(void);
+
+void enter_usr(void) {
+    _uint32 ustk = tgkallocpage() + PAGESIZE;
+    map_page(ustk-PAGESIZE, ustk-PAGESIZE, DEFAULT_USER);
+    asm volatile (
+        "movw $((4*8)|3), %%ax\n\t"
+        "movw %%ax, %%ds\n\t"
+        "movw %%ax, %%es\n\t"
+        "movw %%ax, %%fs\n\t"
+        "movw %%ax, %%gs\n\t"
+
+        "movl %0, %%eax\n\t"
+
+        "pushl $((4*8)|3)\n\t"
+        "pushl %%eax\n\t"
+        "pushfl\n\t"
+        "pushl $((3*8)|3)\n\t"
+        "pushl $test_user\n\t"
+
+        "iret"
+        :
+        : "r"(ustk)
+        : "eax", "memory"
+    );
+}
 
 _uint8 inb(_uint16 p) {
     _uint8 r;
@@ -73,10 +97,10 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     ttyputchars(":- virtual mem init\n");
     map_page((_uint32)&test_user, (_uint32)&test_user, DEFAULT_USER);
     ttyputchars(":- mapped testing function\n");
+    asm volatile ("sti");
     enter_usr();
     ttyputchars(":- userland init\n");
     ttyputchars(":- init done\n");
-    asm volatile ("sti");
     fbclear();
     ttyputcharsf("Welcome to Tawagoto (tgk v%)\n", ver);
     __psh((struct sys_info){mem, format("Tawagoto v%", ver)});

@@ -47,20 +47,6 @@ flush_tss:
 global test_user
 test_user:
     ret
-global enter_usr
-enter_usr:
-    mov ax, (4*8)|3
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov eax, esp
-    push (4*8)|3
-    push eax
-    pushf
-    push (3*8)|3
-    push test_user
-    iret
 global stack_top
 global stack_bottom
 section .bss
