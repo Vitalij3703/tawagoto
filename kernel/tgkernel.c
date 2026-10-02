@@ -15,6 +15,9 @@
 #include "bin/psh/psh.h"
 #include "tty/tty.h"
 
+extern void enter_usr(void);
+extern void test_user(void);
+
 _uint8 inb(_uint16 p) {
     _uint8 r;
     asm volatile ("inb %1, %0" : "=a"(r) : "Nd"(p));
@@ -58,7 +61,7 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     its((mbi->mem_lower + mbi->mem_upper)/1024, mem);
     ttyputcharsf("tawagoto kernel v%\n\tby solez\n", ver);
     ttyputcharsf(":- mem %MiB\n", mem);
-    ttyputchars(":- init tty\n");
+    ttyputchars(":- init out\n");
     asm volatile ("cli");
     char str[13]; its(123, str);
     ttyputcharsf(":- 123 in string form is '%'\n", str);
@@ -68,6 +71,10 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     ttyputchars(":- init gdt\n");
     vmeminit(mbi);
     ttyputchars(":- virtual mem init\n");
+    map_page((_uint32)&test_user, (_uint32)&test_user, 0x007);
+    ttyputchars(":- mapped testing function\n");
+    enter_usr();
+    ttyputchars(":- userland init\n");
     ttyputchars(":- init done\n");
     asm volatile ("sti");
     fbclear();

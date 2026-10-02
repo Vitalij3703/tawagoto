@@ -2,7 +2,7 @@
 #include "tglib/tgtype.h"
 #include "tglib/tgstr.h"
 
-#define GDTE 5
+#define GDTE 6
 
 extern _uint32 stack_top;
 extern void flush_tss(void);
@@ -41,12 +41,13 @@ struct tss_entry _tsse; // these horrible names prove my code isnt ai (and using
 
 void __wtss(struct gdt_entry* e) {
     _uint32 b = (_uint32)&_tsse;
-    _uint32 l = sizeof(_tsse);
+    _uint32 l = sizeof(_tsse) - 1;
     e->limit_low = l;
     e->base_low = b;
-    e->base_high = (b & (0xFF << 24) >> 24);
+    e->base_high = (b >> 24) & 0xFF;
     e->base_mid = (b >> 16) & 0xFF;
     e->access = 0x89;
+    e->gran = 0x0;
     memset((_uint8*)&_tsse, 0, sizeof(_tsse));
     _tsse.ss0 = 0x10;
     _tsse.esp0 = (_uint32)&stack_top;
@@ -100,7 +101,6 @@ void _tgkinitgdt() {
     gdt[3] = uc;
     gdt[4] = ud;
     __wtss(&gdt[5]);
-    flush_tss();
     static struct gdt_ptr ptr;
     ptr.limit = sizeof(gdt) - 1;
     ptr.base = (_uint32)&gdt;
@@ -119,4 +119,5 @@ void _tgkinitgdt() {
         "movw %%ax, %%ss\n"
         : : : "eax", "memory"
     );
+    flush_tss();
 }

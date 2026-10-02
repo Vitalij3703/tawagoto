@@ -44,8 +44,9 @@ flush_tss:
 	mov ax, (5 * 8) | 0
 	ltr ax
 	ret
+global test_user
 test_user:
-    cli
+    ret
 global enter_usr
 enter_usr:
     mov ax, (4*8)|3
