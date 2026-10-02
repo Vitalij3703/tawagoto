@@ -4,6 +4,9 @@
 #include "tglib/tgtype.h"
 #include "boot/multiboot.h"
 
+#define DEFAULT_USER 0x007
+#define DEFAULT_ROOT 0x003
+
 static _uint32* page_direc;
 
 #define entry(addr, flags) (((_uint32)addr & ~0xFFF) | flags)
