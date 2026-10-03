@@ -37,9 +37,6 @@ void fbinit(multiboot_info_t* info) {
     max_char_row = height/8;
     bg_color = 0x0000FF;
     fg_color = 0xFFFFFF;
-    //for (int i = 0; i < height; i++) // for testing
-    //    for (int ii = 0; ii < width; ii++)
-    //        fbdrawpx(ii, i, DEFAULT_FG_COL);
     fbfill(bg_color);
     //ttyputchars(" tawagoto sucks. w nights spider");
 }

@@ -29,12 +29,12 @@ _uint32 map_page(_uint32 paddr, _uint32 vaddr, _uint16 flags) {
     _uint32* direc = &page_direc[vaddr >> 22];
     if(!(*direc & 1)){
         _uint32* nap = (_uint32*)tgkallocpage();
-        memset((_uint8*)direc, 0, sizeof(*direc));
+        memset((_uint8*)nap, 0, PAGESIZE);
         direc = nap;
         page_direc[vaddr>>22] = entry(nap, flags);
     }
     if (flags & USER)
-        *direc |= 0x004;
+        *direc |= USER;
     _uint32* index = &(direc[(vaddr>>12) & 0x3FF]);
     *index = entry(paddr, flags);
     asm volatile ("invlpg %0\n\t"::"m"(vaddr));
