@@ -97,7 +97,7 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     ttyputchars(":- virtual mem init\n");
     map_page((_uint32)&test_user, (_uint32)&test_user, DEFAULT_USER);
     ttyputchars(":- mapped testing function\n");
-    asm volatile ("sti");
+    //asm volatile ("sti");
     enter_usr();
     ttyputchars(":- userland init\n");
     ttyputchars(":- init done\n");

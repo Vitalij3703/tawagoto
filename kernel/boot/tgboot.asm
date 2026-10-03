@@ -46,7 +46,7 @@ flush_tss:
 	ret
 global test_user
 test_user:
-    ret
+    jmp test_user
 global stack_top
 global stack_bottom
 section .bss
