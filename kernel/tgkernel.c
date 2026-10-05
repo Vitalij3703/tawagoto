@@ -96,13 +96,27 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     vmeminit(mbi);
     ttyputchars(":- virtual mem init\n");
     map_page((_uint32)&test_user, (_uint32)&test_user, DEFAULT_USER);
-    ttyputchars(":- mapped testing function\n");
-    //asm volatile ("sti");
+    map_page((_uint32)&map_page, (_uint32)&map_page, DEFAULT_USER);
+    map_page((_uint32)&ttyputchar, (_uint32)&ttyputchar, DEFAULT_USER);
+    map_page((_uint32)&ttyputchars, (_uint32)&ttyputchars, DEFAULT_USER);
+    map_page((_uint32)&ttyputcharsf, (_uint32)&ttyputcharsf, DEFAULT_USER);
+    map_page((_uint32)&ttychangecolor, (_uint32)&ttychangecolor, DEFAULT_USER);
+    map_page((_uint32)&fbclear, (_uint32)&fbclear, DEFAULT_USER);
+    map_page((_uint32)&fbdrawpx, (_uint32)&fbdrawpx, DEFAULT_USER);
+    map_page((_uint32)&fbfill, (_uint32)&fbfill, DEFAULT_USER);
+    map_page((_uint32)&user_continue, (_uint32)&user_continue, DEFAULT_USER);
+    map_page((_uint32)&__psh, (_uint32)&__psh, DEFAULT_USER);
+    ttyputchars(":- mapped functions to be user-accesible\n");
     enter_usr();
+    asm volatile ("sti");
+}
+
+void user_continue(void) {
     ttyputchars(":- userland init\n");
     ttyputchars(":- init done\n");
     fbclear();
+    char ver[13];
+    its(TAWAGOTO_VERSION, ver);
     ttyputcharsf("Welcome to Tawagoto (tgk v%)\n", ver);
-    __psh((struct sys_info){mem, format("Tawagoto v%", ver)});
-    
+    __psh((struct sys_info){"NCA", format("Tawagoto v%", ver)});
 }

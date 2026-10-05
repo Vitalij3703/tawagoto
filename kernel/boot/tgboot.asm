@@ -44,9 +44,10 @@ flush_tss:
 	mov ax, (5 * 8) | 0
 	ltr ax
 	ret
+extern user_continue
 global test_user
 test_user:
-    jmp test_user
+    jmp user_continue
 global stack_top
 global stack_bottom
 section .bss

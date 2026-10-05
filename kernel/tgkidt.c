@@ -45,7 +45,11 @@ void _tgkexception(struct iframe *f) {
     xts(f->eip, eips);
     char err[13];
     xts(f->errc, err);
-    ttyputcharsf("\n:- CPU EXCEPTION\n:- name %\n:- eip %\n:- err code %\n\n", enames[f->inum], eips, err);
+    _uint32 accesed;
+    asm volatile ("mov %%cr2, %0":"=r"(accesed));
+    char cr2[13];
+    xts(accesed, cr2);
+    ttyputcharsf("\n:- CPU EXCEPTION\n:- name %\n:- eip %\n:- err code %\n:- accesed (cr2) %\n", enames[f->inum], eips, err, cr2);
     asm volatile ("hlt");
 }
 volatile _uint32 test = 0;
