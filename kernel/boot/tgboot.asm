@@ -47,7 +47,7 @@ flush_tss:
 extern user_continue
 global test_user
 test_user:
-    jmp user_continue
+    cli
 global stack_top
 global stack_bottom
 section .bss

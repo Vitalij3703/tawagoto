@@ -1,3 +1,4 @@
 build/
 qemu.log
 *.png
+.vscode

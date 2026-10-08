@@ -11,6 +11,5 @@ void __tgkhang__(void);
 _uint8 inb(_uint16 p);
 void outb(_uint16 p, _uint8 v);
 void enter_usr(void);
-void user_continue(void);
 
 #endif
