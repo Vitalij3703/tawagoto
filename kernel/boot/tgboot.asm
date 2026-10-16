@@ -1,7 +1,7 @@
 ; contains stuff that (might) be necessary to boot
 
 _MAGIC equ 0x1BADB002
-_FLAGS equ 0x00000003
+_FLAGS equ 0x00000007
 _CHECK equ -(_MAGIC + _FLAGS) ; sum
 
 section .multiboot
