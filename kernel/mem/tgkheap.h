@@ -17,6 +17,6 @@ void* kmalloc(_uint rs);
 
 #define BAD_PTR (0x11BADBAD)
 
-void kmfree(void* amem);
+int kmfree(void* amem);
 
 #endif

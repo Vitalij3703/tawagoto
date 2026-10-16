@@ -6,7 +6,7 @@
 // the size of a singular page (maybe i'm not so bad at spelling)
 #define PAGESIZE 4096
 
-#define PAGEFAIL NULL
+#define PAGEFAIL (_uint32)NULL
 
 static volatile _uint8* bitmap;
 static _uint32 tpages;

@@ -3,7 +3,7 @@
 #include "tglib/tgtype.h"
 
 #define ALIGN      (8)
-#define ALIGN_8(n) ((rss)+(ALIGN-1) & ~(ALIGN-1))
+#define ALIGN_8(n) ((n)+(ALIGN-1) & ~(ALIGN-1))
 #define HEADSIZE   (ALIGN_8(sizeof(struct heapblock)))
 
 struct heapblock* hhead = NULL;
@@ -17,7 +17,7 @@ int heap_grow() {
     _uint32 page = tgkallocpage();
     if(page == PAGEFAIL) return HEAP_FAIL;
     struct heapblock* block = (struct heapblock*)(page);
-    block->size = PAGESIZE-HEADSIZE
+    block->size = PAGESIZE-HEADSIZE;
     block->free = 1;
     block->next = NULL;
     block->magic = MEMMAGIC;
@@ -94,7 +94,7 @@ void coalase() {
 }
 
 int kmfree(void* amem) {
-    if(amem == NULL) return;
+    if(amem == NULL) return 0;
     struct heapblock* block = ((struct heapblock*)amem)-1;
     if(block->magic == MEMMAGIC && block->free == 0) {
         block->free = 1;
