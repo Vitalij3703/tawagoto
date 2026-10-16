@@ -1,3 +1,3 @@
 #!/bin/sh
 
-qemu-system-i386 -m 2048M -cdrom build/tg.iso  #-display sdl -enable-kvm -d int,cpu_reset -D qemu.log -no-reboot -no-shutdown -s -device bochs-display -vga qxl
+qemu-system-x86_64 -machine q35   -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd   -drive if=pflash,format=raw,file=vars.fd   -cdrom build/tg.iso -debugcon file:qemu.log -no-reboot -s
