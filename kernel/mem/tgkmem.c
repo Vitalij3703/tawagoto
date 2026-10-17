@@ -7,6 +7,10 @@
 extern _uint8 tgkstart;
 extern _uint8 tgkend;
 
+volatile _uint8* bitmap;
+_uint32 tpages;
+_uint32 lalloc;
+
 void mpsu(_uint32 base, _uint32 len) {
     _uint32 addr = base;
     while(addr < len) {
@@ -83,17 +87,4 @@ void tgkfreepages(_uint32 loc, _uint size) {
     for (int i = 1; i < size+1; i++) {
         tgkfreepage(loc + (PAGESIZE*i));
     }
-}
-
-// physical memory allocate
-void* pmalloc(_uint size) {
-    _uint   reqpage = rau(size)/PAGESIZE;
-    _uint32 pages[reqpage];
-    tgkallocpages(reqpage, pages);
-    return (void*)pages;
-}
-
-void pmfree(_uint32 addr, _uint size) {
-    _uint reqpage = rau(size)/PAGESIZE;
-    tgkfreepages(addr, reqpage);
 }

@@ -2,6 +2,9 @@
 #define _TGGDT
 #include "tglib/tgtype.h"
 
+extern _uint8 stack_top[];
+extern _uint8 stack_bottom[];
+
 struct gdt_entry {
     _uint16 limit_low;
     _uint16 base_low;

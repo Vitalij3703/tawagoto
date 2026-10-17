@@ -4,7 +4,7 @@
 
 #define GDTE 6
 
-extern __uint32 stack_top;
+
 extern void flush_tss(void);
 
 struct tss_entry {
@@ -48,9 +48,9 @@ void __wtss(struct gdt_entry* e) {
     e->base_mid = (b >> 16) & 0xFF;
     e->access = 0x89;
     e->gran = 0x0;
-    memset((__uint8*)&_tsse, 0, sizeof(_tsse));
+    memset((_uint8*)&_tsse, 0, sizeof(_tsse));
     _tsse.ss0 = 0x10;
-    _tsse.esp0 = (_uint32)&stack_top;
+    _tsse.esp0 = (_uint32)stack_top;
 }
 
 void __sks(_uint32 s) {

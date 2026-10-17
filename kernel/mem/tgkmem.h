@@ -8,9 +8,9 @@
 
 #define PAGEFAIL (_uint32)NULL
 
-static volatile _uint8* bitmap;
-static _uint32 tpages;
-static _uint32 lalloc;
+extern volatile _uint8* bitmap;
+extern _uint32 tpages;
+extern _uint32 lalloc;
 
 // get byte index
 #define gbi(i)  (i/8)
@@ -52,7 +52,5 @@ void tgkfreepage(_uint32 loc);
 void tgkallocpages(_uint size, _uint32* buf);
 
 void tgkfreepages(_uint32 loc, _uint size);
-
-void* pmalloc(_uint size);
 
 #endif

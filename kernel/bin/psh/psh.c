@@ -18,6 +18,8 @@
 
 #define HMSG "commands:\n\techo [args] : output args\n\ttest : output a test message\n\ttest_wait : test the timer driver\n\ttest_bit : test physical mem alloc\n\ttest_virtual : test virtual memory mappings\n\ttest_malloc : test kmalloc() and kmfree()\n\tclear : clear the screen\n\thelp : output this message"
 
+int state = 0;
+
 void exec(char* cmd) {
     if(*cmd == 0)
         return;
@@ -113,6 +115,10 @@ void exec(char* cmd) {
         ttyputchars("done\n");
         return;
     }
+    else if(strcmp("q", args[0]) == 0) {
+        state = 1;
+        return;
+    }
     else {
         ttyputcharsf("Invalid command '%'! Do 'help'\n", args[0]);
         return;
@@ -123,6 +129,7 @@ void exec(char* cmd) {
 void __psh(struct sys_info info) {
     ttyputcharsf("\nos: %\nshell: primitive shell (PSh)\nmem: %MiB\n\n", info.os, info.mem);
     while(1) {
+        if(state == 1) return;
         char buf[256];
         ttyputchars("PSh ::> ");
         kkreadline(buf);

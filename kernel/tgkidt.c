@@ -5,6 +5,7 @@
 #include "tglib/tgtconv.h"
 #include "driver/key/tgkkey.h"
 #include "driver/timer/timer.h"
+#include "proc/proc.h"
 
 void _tgkexception(struct iframe *f) {
     const char* enames[32] = {
@@ -53,6 +54,8 @@ void _tgkexception(struct iframe *f) {
     asm volatile ("hlt");
 }
 volatile _uint32 test = 0;
+volatile _uint8 slt = 0;
+volatile _uint8 maxtime = 10;
 void _tgkinterrupt(struct iframe *f) {
     if(f->inum < 32) {
         _tgkexception(f);
@@ -61,7 +64,15 @@ void _tgkinterrupt(struct iframe *f) {
     else /*if(f->inum < 48)*/ {
         if(f->inum == 32) {
             test++;
+            slt++;
             outb(0x20, 0x20);
+            if(thead == NULL) _tgkpanic("No thread to execute!");
+            if(tcurr == NULL) tcurr = thead;
+            if(slt==maxtime) {
+                slt=0;
+                //ttyputchar('S');
+                thread_switch(tcurr->next);
+            }
         }
         
         if(f->inum == 33) 

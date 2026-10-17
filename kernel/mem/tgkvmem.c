@@ -10,6 +10,8 @@
 
 extern void enablepaging(_uint32* pd);
 
+_uint32* page_direc;
+
 void vmeminit(multiboot_info_t* info) {
     page_direc = (_uint32*)tgkallocpage();
     int flag = DEFAULT_ROOT;

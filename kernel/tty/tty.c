@@ -35,17 +35,20 @@ void fbinit(multiboot_info_t* info) {
     cccol = 0;
     max_char_col = width/8;
     max_char_row = height/8;
+    fbfill(0xAAAAAA);
+    cccol+=99;
+    fg_color=0x221122;
+    bg_color=0xAAAAAA;
+    ttyputchars("tawagoto sux. w nights spider\n");
     bg_color = 0x0000FF;
     fg_color = 0xFFFFFF;
-    fbfill(bg_color);
-    //ttyputchars(" tawagoto sucks. w nights spider");
 }
 
 _uint32 gbg() {
     return bg_color;
 }
 _uint32 gfg() {
-    return bg_color;
+    return fg_color;
 }
 
 void fbdrawpx(_uint x, _uint y, _uint32 color) {
@@ -69,6 +72,7 @@ void fbclear() {
 }
 
 void ttydrawchar(char c, _uint x, _uint y) {
+    outb(0xE9, c);
     for (int i = 0; i < 8; i++) {
         char charrow = font8x8_basic[c][i];
         for (int ii = 0; ii < 8; ii++) {
@@ -95,6 +99,10 @@ void ttyputchar(char c) {
     if(c == 8) {
         cccol--;
         return;
+    }
+    if(ccrow==max_char_row) {
+        ccrow = 0;
+        cccol = 0;
     }
     ttydrawchar(c, cccol++*8, ccrow*8);
 }
