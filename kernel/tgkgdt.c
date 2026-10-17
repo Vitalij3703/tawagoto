@@ -4,37 +4,37 @@
 
 #define GDTE 6
 
-extern _uint32 stack_top;
+extern __uint32 stack_top;
 extern void flush_tss(void);
 
 struct tss_entry {
-	uint32_t prev_tss;
-	uint32_t esp0;
-	uint32_t ss0;
-	uint32_t esp1;
-	uint32_t ss1;
-	uint32_t esp2;
-	uint32_t ss2;
-	uint32_t cr3;
-	uint32_t eip;
-	uint32_t eflags;
-	uint32_t eax;
-	uint32_t ecx;
-	uint32_t edx;
-	uint32_t ebx;
-	uint32_t esp;
-	uint32_t ebp;
-	uint32_t esi;
-	uint32_t edi;
-	uint32_t es;
-	uint32_t cs;
-	uint32_t ss;
-	uint32_t ds;
-	uint32_t fs;
-	uint32_t gs;
-	uint32_t ldt;
-	uint16_t trap;
-	uint16_t iomap_base;
+	_uint32 prev_tss;
+	_uint32 esp0;
+	_uint32 ss0;
+	_uint32 esp1;
+	_uint32 ss1;
+	_uint32 esp2;
+	_uint32 ss2;
+	_uint32 cr3;
+	_uint32 eip;
+	_uint32 eflags;
+	_uint32 eax;
+	_uint32 ecx;
+	_uint32 edx;
+	_uint32 ebx;
+	_uint32 esp;
+	_uint32 ebp;
+	_uint32 esi;
+	_uint32 edi;
+	_uint32 es;
+	_uint32 cs;
+	_uint32 ss;
+	_uint32 ds;
+	_uint32 fs;
+	_uint32 gs;
+	_uint32 ldt;
+	_uint16 trap;
+	_uint16 iomap_base;
 } __attribute__((packed));
 
 struct tss_entry _tsse; // these horrible names prove my code isnt ai (and using tgtype.h instead of stdint.h)
@@ -48,7 +48,7 @@ void __wtss(struct gdt_entry* e) {
     e->base_mid = (b >> 16) & 0xFF;
     e->access = 0x89;
     e->gran = 0x0;
-    memset((_uint8*)&_tsse, 0, sizeof(_tsse));
+    memset((__uint8*)&_tsse, 0, sizeof(_tsse));
     _tsse.ss0 = 0x10;
     _tsse.esp0 = (_uint32)&stack_top;
 }

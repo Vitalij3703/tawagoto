@@ -18,4 +18,6 @@ struct gdt_ptr {
 
 void _tgkinitgdt();
 
+void __sks(_uint32 s);
+
 #endif
