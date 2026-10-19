@@ -7,22 +7,47 @@
 #include "boot/multiboot.h"
 #include "tglib/tgtype.h"
 #include "tglib/tgstr.h"
+#include "tty/tty.h"
+#include "tgkernel.h"
+#include "tglib/tgtconv.h"
 
 extern void enablepaging(_uint32* pd);
 
 _uint32* page_direc;
 
+#define FB_MOVE_ADDR (0x80000000)
+#define USERSPACE_ADDR (0x40000000)
+
 void vmeminit(multiboot_info_t* info) {
     page_direc = (_uint32*)tgkallocpage();
+    if(page_direc == PAGEFAIL)
+        _tgkpanic("Failed to initialize virtual memory.\nReboot.");
     int flag = DEFAULT_ROOT;
     for (_uint32 i = 0; i < 1024; i++) {
         _uint32* page_table = (_uint32*)tgkallocpage();
         for (_uint32 ii = 0; ii < 1024; ii++) {
-            if((i*1024+ii)*PAGESIZE > 0x3FFFFFFF) flag = DEFAULT_USER;
+            if((i*1024+ii)*PAGESIZE >= USERSPACE_ADDR
+                && (i*1024+ii)*PAGESIZE <= FB_MOVE_ADDR) flag = DEFAULT_USER;
+            else flag = DEFAULT_ROOT;
             page_table[ii] = entry((i*1024+ii)*PAGESIZE, flag);
         }
         page_direc[i] = entry(page_table, flag);
     }
+
+    if((_uint32)fb < FB_MOVE_ADDR) {
+        if(rau(fbend) + FB_MOVE_ADDR < FB_MOVE_ADDR)
+            _tgkpanic("Framebuffer overflow, get a smaller display.\nWhere did you even get such a large display?");
+        _uint32 re = rau(fbend);
+        _uint32 rs = rad((_uint32)fb);
+        _uint32 rqp = (re - rs) / PAGESIZE;
+        char frq[13];
+        its(rqp, frq);
+        ttyputcharsf(":- pages requested by fb %\n", frq);
+        for(_uint i = 0; i < rqp; i++)
+            map_page(rs+i*PAGESIZE, rs+i*PAGESIZE+FB_MOVE_ADDR, DEFAULT_ROOT);
+        fb = fb + FB_MOVE_ADDR;
+    } else
+        ttyputchars(":- framebuffer move not needed\n");
     
     enablepaging(page_direc);
 }

@@ -29,6 +29,7 @@ for f in ../kernel/bin/*/*.c; do
 done
 nasm -f elf32 ../kernel/is.asm -o tgis.o
 nasm -f elf32 ../kernel/proc/sctx.asm -o sctx.o
+nasm -f elf32 ../kernel/mem/pageutil.asm -o putil.o
 i686-elf-gcc -T ../kernel/boot/linker.ld -o tg.bin -ffreestanding -O0 -nostdlib *.o -lgcc -g
 cp tg.bin ../iso/boot/tg.bin
 grub-mkrescue -o tg.iso ../iso

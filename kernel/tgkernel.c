@@ -44,15 +44,7 @@ void enter_usr(void) {
     );
 }
 
-_uint8 inb(_uint16 p) {
-    _uint8 r;
-    asm volatile ("inb %1, %0" : "=a"(r) : "Nd"(p));
-    return r;
-}
 
-void outb(_uint16 p, _uint8 v) {
-    asm volatile ("outb %0, %1" : : "a"(v), "Nd"(p));
-}
 
 // please do not call this function
 __attribute__((noreturn))
@@ -86,7 +78,7 @@ void caps_toggle(int state) {
 
 void _tgkpanic(char *reason) {
     asm volatile ("cli");
-    __tgkbeepst(800);
+    __tgkbeepst(1200);
     caps_toggle(1);
     for(volatile _uint i = 0; i<1024*1024; i++);
     __tgkbeepno();
@@ -101,6 +93,16 @@ void _tgkpanic(char *reason) {
     __tgkhang__();
 }
 
+void t2f() {
+    while(1) {
+        __tgkbeepst(3000);
+        caps_toggle(1);
+        __tgkbeepno();
+        caps_toggle(0);
+        fbdrawpx(1, 1, 0xFFFFFF);
+    }
+}
+
 void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     if (magic != 0x2BADB002) return;
     asm volatile ("cli");
@@ -109,12 +111,15 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     _uint32 page = tgkallocpage();
     tgkfreepage(page);
     fbinit(mbi);
+    char fbaddr[13];
+    its(mbi->framebuffer_addr, fbaddr);
     char ver[13];
     its(TAWAGOTO_VERSION, ver);
     char mem[13];
     its((mbi->mem_lower + mbi->mem_upper)/1024, mem);
     ttyputcharsf("tawagoto kernel v%\n\tby solez\n", ver);
-    ttyputcharsf(":- mem %MiB\n", mem);
+    ttyputcharsf(":- fb addr %\n", fbaddr);
+    ttyputcharsf(":- mem % MiB\n", mem);
     ttyputchars(":- init out\n");
     asm volatile ("cli");
     char str[13]; its(123, str);
@@ -159,8 +164,10 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     asm volatile ("sti");
     ttyputchars(":- thread p1 test\n");
     ttyputchars(":- thread p2 test\n");
+    struct thread* t2 = thread_create((_uint32)t2f, NULL, NULL);
     ttyputchars(":- initializing psh (q to exit)\n");
     struct thread* psh = thread_create((_uint32)__psh, (void*)sysinfo, NULL);
+    make_thread_keyowning(psh);
     char tid1[13];
     char state1[13];
     char esp1[13];
@@ -182,8 +189,5 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     its((_uint32)stack_bottom, rs1);
     its((_uint32)stack_top, rst1);
     ttyputcharsf("tid: %\nstate: %\nesp: %\nkstack: %\nkstackt: %\nieip: %\n arg: %\ntrue kstack: %\ntrue kstackt: %\n",tid1,state1,esp1,kstack1,kstackt1,ieip1,arg1,rs1,rst1);
-    ttyputchars(":- ending psh\n");
-    thread_kill(psh->tid);
-    thread_free(psh);
     ttyputchars(":- done\n");
 }

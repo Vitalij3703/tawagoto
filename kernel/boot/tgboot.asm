@@ -28,17 +28,6 @@ _start:
 .hang:
     hlt
     jmp .hang
-global enablepaging
-enablepaging:
-    push ebp
-    mov ebp, esp
-    mov eax, [ebp+8]
-    mov cr3, eax
-    mov eax, cr0
-    or eax, 0x80000000
-    mov cr0, eax
-    pop ebp
-    ret
 global flush_tss
 flush_tss:
 	mov ax, (5 * 8) | 0

@@ -10,13 +10,14 @@
 #include "mem/tgkmem.h"
 #include "mem/tgkvmem.h"
 #include "mem/tgkheap.h"
+#include "proc/proc.h"
 
 // commands:
 //  echo [args] : output args 
 //  test : output a test message
 //  help : print this message
 
-#define HMSG "commands:\n\techo [args] : output args\n\ttest : output a test message\n\ttest_wait : test the timer driver\n\ttest_bit : test physical mem alloc\n\ttest_virtual : test virtual memory mappings\n\ttest_malloc : test kmalloc() and kmfree()\n\tclear : clear the screen\n\thelp : output this message"
+#define HMSG "commands:\n\techo [args] : output args\n\ttest : output a test message\n\ttest_wait : test the timer driver\n\ttest_bit : test physical mem alloc\n\ttest_virtual : test virtual memory mappings\n\ttest_malloc : test kmalloc() and kmfree()\n\tclear : clear the screen\n\thelp : output this message\n\tq : quit"
 
 int state = 0;
 
@@ -115,6 +116,13 @@ void exec(char* cmd) {
         ttyputchars("done\n");
         return;
     }
+    else if(strcmp("psh", args[0]) == 0) {
+        ttyputchars("recurse\n\n");
+        struct thread* r = thread_create((_uint32)__psh, NULL, NULL);
+        make_thread_keyowning(r);
+        thread_kill(r->tid);
+        return;
+    }
     else if(strcmp("q", args[0]) == 0) {
         state = 1;
         return;
@@ -128,8 +136,7 @@ void exec(char* cmd) {
 
 void __psh(struct sys_info info) {
     ttyputcharsf("\nos: %\nshell: primitive shell (PSh)\nmem: %MiB\n\n", info.os, info.mem);
-    while(1) {
-        if(state == 1) return;
+    while(!state) {
         char buf[256];
         ttyputchars("PSh ::> ");
         kkreadline(buf);

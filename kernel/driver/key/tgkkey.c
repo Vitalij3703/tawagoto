@@ -5,18 +5,19 @@
 #include "tglib/tgtype.h"
 #include "tglib/tgtconv.h"
 #include "tgkernel.h"
+#include "proc/proc.h"
 
 struct rowcol {
     _uint8 scan;
     char key;
     _uint8 rowcol;
     int release;
-} rowcol;
+};
 
 struct shift {
     char in;
     char out;
-} shift;
+};
 
 #define NOKEY {0, '\0', 0, 0}
 #define RELEASE_OFFSET 0x80
@@ -168,8 +169,11 @@ char make_upper(char c) {
 }
 
 _uint8 sd;
+struct thread* focus = NULL;
 
 char _tgkkcstk(_uint8 scan) {
+    focus = find_last_keyowning();
+    while(tcurr != focus);
     if(scan > RELEASE_OFFSET) {
         if(keys[scan - RELEASE_OFFSET].key == '\4')
             sd = 0;
@@ -196,8 +200,7 @@ void _tgkkpk(int inum) {
 }
 
 void _tgkekd() { 
-    // look up ps2 commands
-    ttyputchars(":- enabling ps2 keyboard driver (tgkkey init)\n");
+    ttyputchars(":- enabling ps2 keyboard driver (tgkkey init)\n:- stage: ");
     ttyputchar('0');
     _uint8 cfg;
     while (inb(0x64) & 0x01)

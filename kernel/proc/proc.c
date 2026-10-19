@@ -4,6 +4,9 @@
 #include "mem/tgkheap.h"
 #include "tglib/tgstr.h"
 #include "tgkgdt.h"
+#include "mem/tgkvmem.h"
+#include "tty/tty.h"
+#include "tglib/tgtconv.h"
 
 struct thread* thead;
 struct thread* ttail;
@@ -44,10 +47,12 @@ void thread_push(struct thread* t) {
         thead = t;
         ttail = t;
         ttail->next = thead;
+        thead->prev = ttail;
     } else {
         ttail->next = t;
         ttail = t;
         ttail->next = thead;
+        thead->prev = ttail;
     }
     irqrestore(v);
 }
@@ -153,7 +158,26 @@ struct thread* thread_create(_uint32 func, void* argument, struct process* ownin
     t->tid = last_thread_id++;
     thread_push(t);
     irqrestore(v);
+    char ti[13];
+    its(t->tid, ti);
+    ttyputcharsf(":- created thread, tid %\n", ti);
     return t;
+}
+
+struct thread* find_last_keyowning() {
+    struct thread* t = ttail;
+    while(t->keyowning!=1
+        &&(get_thread_state(t)!=PROC_RUNNING
+        ||get_thread_state(t)!=PROC_READY)) {
+        t = t->prev;
+        if(t == ttail)
+            return NULL;
+    }
+    return t;
+}
+
+void make_thread_keyowning(struct thread* t) {
+    t->keyowning = 1;
 }
 
 //extern _uint8 stack_top[];
@@ -187,11 +211,11 @@ void thread_switch(struct thread* next) {
         irqrestore(v);
         return;
     }
-    set_thread_state(tcurr, PROC_READY);
+    if(get_thread_state(tcurr) == PROC_RUNNING)
+        set_thread_state(tcurr, PROC_READY);
     set_thread_state(next, PROC_RUNNING);
     struct thread* old = tcurr;
     tcurr = next;
-    // later switch page dirs
     __sks(next->kstackt);
     sctx(&old->esp, next->esp);
     irqrestore(v);
@@ -200,12 +224,49 @@ void thread_switch(struct thread* next) {
 
 /* process stuff */
 
+struct process* phead;
+struct process* ptail;
+struct process* pcurr;
 
+// create a new page directory with the kernel part shared
+_uint32* addrspacenew() {
+    _uint32* newdir = (_uint32*)tgkallocpage();
+    if(newdir == PAGEFAIL) return NULL;
+    memset((_uint8*)newdir, 0, PAGESIZE);
+    for(_uint32 i = 0; i < 1024; i++) {
+        _uint32 page_table = page_direc[i];
+        newdir[i] = page_table;
+    }
+    for(_uint32 i = 0; i < 1024; i++) {
+        _uint32 page_table = newdir[i];
+        newdir[i] = page_table;
+    }
+    return newdir;
+}
 
 struct process* proc_create(char* name, 
                             char* from, 
                             int isroot, 
                             struct process* parent,
                             _uint32 func) {
+    
+}
 
+void set_process_state(struct process* proc, PROC_STATE state) {
+    proc->state = state;
+    proc->root_thread->state = state;
+}
+
+void proc_kill(int pid) {
+    _uint32 v = irqsave();
+    struct process* p = phead;
+    while(p->pid!=pid) {
+        p = p->next;
+        if(p == phead) {
+            irqrestore(v);
+            return;
+        }
+    }
+    thread_kill(p->root_thread->tid);
+    irqrestore(v);
 }

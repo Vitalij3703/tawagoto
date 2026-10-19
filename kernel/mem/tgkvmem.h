@@ -20,6 +20,8 @@
 #define AVL2 0x400
 #define AVL3 0x800
 
+extern void loadpdir(_uint32* pd);
+
 extern _uint32* page_direc;
 
 #define entry(addr, flags) (((_uint32)addr & ~0xFFF) | flags)

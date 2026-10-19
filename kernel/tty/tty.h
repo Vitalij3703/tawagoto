@@ -12,6 +12,10 @@
 
 #define TAWAGOTO_VERSION 0
 
+extern _uint8* fb;
+
+extern _uint32 fbend;
+
 void fbinit(multiboot_info_t* info);
 
 void fbdrawpx(_uint x, _uint y, _uint32 color); // use RGB_TO_COLOR for color

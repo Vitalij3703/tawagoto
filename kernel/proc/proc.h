@@ -29,6 +29,7 @@ struct thread {
     _uint32 ieip; // initial eip (function)
     void* arg; // the argument for the function
     _uint8 time;
+    int keyowning; // is focused by the keyboard driver
     struct thread* next;
     struct thread* prev;
 };
@@ -53,7 +54,8 @@ struct process {
     struct thread* root_thread;
     PROC_OWNER owner;
     struct process* parent; // if it is the parent, set to NULL
-
+    struct process* next;
+    struct process* prev;
 };
 
 extern struct thread* thead;
@@ -71,6 +73,14 @@ void thread_yield(struct thread* t);
 extern void sctx(_uint32* old, _uint32 new);
 void thread_switch(struct thread* next);
 struct thread* initial_thread_create(_uint32 func, void* argument);
+struct thread* find_last_keyowning();
+void make_thread_keyowning(struct thread* t);
+
+/* processes */
+
+extern struct process* phead;
+extern struct process* ptail;
+extern struct process* pcurr;
 
 struct process* proc_create(char* name, 
                             char* from, 
@@ -82,7 +92,7 @@ void proc_destroy(struct process* proc);
 
 void proc_exit(int err);
 
-void proc_kill(int pid);
+void proc_kill(int pid); // thread_kill(p->root)
 
 struct process* proc_get(int pid);
 
