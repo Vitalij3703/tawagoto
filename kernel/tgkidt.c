@@ -71,7 +71,7 @@ void _tgkinterrupt(struct iframe *f) {
             if(slt==maxtime) {
                 slt=0;
                 //ttyputchar('S');
-                thread_switch(tcurr->next);
+                thread_switch(find_next_ready());
             }
         }
         

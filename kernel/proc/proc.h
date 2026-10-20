@@ -73,8 +73,10 @@ void thread_yield(struct thread* t);
 extern void sctx(_uint32* old, _uint32 new);
 void thread_switch(struct thread* next);
 struct thread* initial_thread_create(_uint32 func, void* argument);
+int reap_threads();
 struct thread* find_last_keyowning();
 void make_thread_keyowning(struct thread* t);
+struct thread* find_next_ready();
 
 /* processes */
 

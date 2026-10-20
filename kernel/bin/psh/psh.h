@@ -6,6 +6,6 @@ struct sys_info {
     char* os;
 };
 
-void __psh(struct sys_info info);
+int __psh(struct sys_info info);
 
 #endif

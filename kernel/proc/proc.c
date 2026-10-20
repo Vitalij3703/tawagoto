@@ -164,11 +164,14 @@ struct thread* thread_create(_uint32 func, void* argument, struct process* ownin
     return t;
 }
 
+int isalive(struct thread* t) {
+    return (get_thread_state(t) == PROC_RUNNING || get_thread_state(t) == PROC_READY);
+}
+
 struct thread* find_last_keyowning() {
     struct thread* t = ttail;
     while(t->keyowning!=1
-        &&(get_thread_state(t)!=PROC_RUNNING
-        ||get_thread_state(t)!=PROC_READY)) {
+        &&!(isalive(t))) {
         t = t->prev;
         if(t == ttail)
             return NULL;
@@ -205,9 +208,38 @@ struct thread* initial_thread_create(_uint32 func, void* argument) {
     return t;
 }
 
+int reap_threads() {
+    struct thread* t = thead;
+    for(;;) {
+        if(get_thread_state(t) == PROC_HALFDEAD)
+            thread_free(t);
+        t = t->next;
+    }
+    return 0;
+}
+
+struct thread* find_next_ready() {
+    _uint32 v = irqsave();
+    struct thread* t = tcurr->next;
+    while(get_thread_state(t) != PROC_READY) {
+        t = t->next;
+        if(t == tcurr) {
+            struct thread* chosen = get_thread_state(tcurr) == PROC_RUNNING ? tcurr : thread_get(0);
+            irqrestore(v);
+            return chosen;
+        }
+    }
+    irqrestore(v);
+    return t;
+}
+
 void thread_switch(struct thread* next) {
     _uint32 v = irqsave();
     if(next==tcurr) {
+        irqrestore(v);
+        return;
+    }
+    if(get_thread_state(next) != PROC_READY) {
         irqrestore(v);
         return;
     }

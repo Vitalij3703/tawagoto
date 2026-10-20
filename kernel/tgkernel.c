@@ -93,7 +93,7 @@ void _tgkpanic(char *reason) {
     __tgkhang__();
 }
 
-void t2f() {
+void test_thread() {
     while(1) {
         __tgkbeepst(3000);
         caps_toggle(1);
@@ -120,74 +120,27 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     ttyputcharsf("tawagoto kernel v%\n\tby solez\n", ver);
     ttyputcharsf(":- fb addr %\n", fbaddr);
     ttyputcharsf(":- mem % MiB\n", mem);
-    ttyputchars(":- init out\n");
-    asm volatile ("cli");
-    char str[13]; its(123, str);
-    ttyputcharsf(":- 123 in string form is '%'\n", str);
+    ttyputchars(":- initialized framebuffer output\n");
     _tgkinitidt();
-    ttyputchars(":- init interrupts\n");
+    ttyputchars(":- initialized interrupts\n");
     _tgkinitgdt();
-    ttyputchars(":- init gdt\n");
+    ttyputchars(":- initialized the gdt\n");
     vmeminit(mbi);
-    ttyputchars(":- virtual mem init\n");
-    //__psh((struct sys_info){"N/A", "Tawagoto DEV"});
-    map_page((_uint32)&test_user, (_uint32)&test_user, DEFAULT_USER);
-    map_page((_uint32)&map_page, (_uint32)&map_page, DEFAULT_USER);
-    ttyputchars(":- mapped functions to be user-accesible\n");
-    //ttyputchars("\nif you see a genereal protection fault, usermode is working\n");
-    //enter_usr();
+    ttyputchars(":- initialized virtual memory\n");
+
     struct sys_info* sysinfo = kmalloc(sizeof(struct sys_info));
-    sysinfo->mem = "N/A ";
-    sysinfo->os = "Tawagoto DEV0";
-    struct thread* t = initial_thread_create(0, NULL);
-    char tid[13];
-    char state[13];
-    char esp[13];
-    char kstack[13];
-    char kstackt[13];
-    char ieip[13];
-    char arg[13];
-    char time[13];
-    char rs[13];
-    char rst[13];
-    its(t->tid, tid);
-    its(t->state, state);
-    its(t->esp, esp);
-    its(t->kstack, kstack);
-    its(t->kstackt, kstackt);
-    its(t->ieip, ieip);
-    its((int)t->arg, arg);
-    its(t->time, time);
-    its((_uint32)stack_bottom, rs);
-    its((_uint32)stack_top, rst);
-    ttyputcharsf("tid: %\nstate: %\nesp: %\nkstack: %\nkstackt: %\nieip: %\n arg: %\ntrue kstack: %\ntrue kstackt: %\n",tid,state,esp,kstack,kstackt,ieip,arg,rs,rst);
-    asm volatile ("sti");
-    ttyputchars(":- thread p1 test\n");
-    ttyputchars(":- thread p2 test\n");
-    struct thread* t2 = thread_create((_uint32)t2f, NULL, NULL);
-    ttyputchars(":- initializing psh (q to exit)\n");
+    sysinfo->mem = format("% ", mem);
+    sysinfo->os = format("Tawagoto DEV %", ver);
+
+    initial_thread_create(0, NULL);
+    ttyputchars(":- initialized boot thread\n");
+    thread_create((_uint32)test_thread, NULL, NULL);
+    ttyputchars(":- initialized test thread\n");
+    //thread_create((_uint32)reap_threads, NULL, NULL);
+    ttyputchars(":- initialized reaper thread\n");
     struct thread* psh = thread_create((_uint32)__psh, (void*)sysinfo, NULL);
     make_thread_keyowning(psh);
-    char tid1[13];
-    char state1[13];
-    char esp1[13];
-    char kstack1[13];
-    char kstackt1[13];
-    char ieip1[13];
-    char arg1[13];
-    char time1[13];
-    char rs1[13];
-    char rst1[13];
-    its(psh->tid, tid1);
-    its(psh->state, state1);
-    its(psh->esp, esp1);
-    its(psh->kstack, kstack1);
-    its(psh->kstackt, kstackt1);
-    its(psh->ieip, ieip1);
-    its((int)psh->arg, arg1);
-    its(psh->time, time1);
-    its((_uint32)stack_bottom, rs1);
-    its((_uint32)stack_top, rst1);
-    ttyputcharsf("tid: %\nstate: %\nesp: %\nkstack: %\nkstackt: %\nieip: %\n arg: %\ntrue kstack: %\ntrue kstackt: %\n",tid1,state1,esp1,kstack1,kstackt1,ieip1,arg1,rs1,rst1);
+    ttyputchars(":- initialized psh (q to exit)\n");
+    asm volatile ("sti");
     ttyputchars(":- done\n");
 }

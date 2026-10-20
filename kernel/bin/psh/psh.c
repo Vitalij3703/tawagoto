@@ -120,7 +120,7 @@ void exec(char* cmd) {
         ttyputchars("recurse\n\n");
         struct thread* r = thread_create((_uint32)__psh, NULL, NULL);
         make_thread_keyowning(r);
-        thread_kill(r->tid);
+        //thread_kill(r->tid);
         return;
     }
     else if(strcmp("q", args[0]) == 0) {
@@ -134,7 +134,7 @@ void exec(char* cmd) {
     
 }
 
-void __psh(struct sys_info info) {
+int __psh(struct sys_info info) {
     ttyputcharsf("\nos: %\nshell: primitive shell (PSh)\nmem: %MiB\n\n", info.os, info.mem);
     while(!state) {
         char buf[256];
@@ -142,4 +142,6 @@ void __psh(struct sys_info info) {
         kkreadline(buf);
         exec(buf);
     }
+    ttyputchars("quitting primitive shell...\n");
+    return 0;
 }
