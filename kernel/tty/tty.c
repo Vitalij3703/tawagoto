@@ -2,9 +2,11 @@
 #include "boot/multiboot.h"
 #include "tglib/tgtype.h"
 #include "tgkernel.h"
-#include "tty/font8x8/font8x8_basic.h"
 #include "tglib/tgstr.h"
 #include <stdarg.h>
+
+#define FONT8x16_IMPLEMENTATION
+#include "tty/font8x16/font8x16.h"
 
 _uint8* fb;
 _uint32  fbend;
@@ -34,13 +36,13 @@ void fbinit(multiboot_info_t* info) {
     ccrow = 0;
     cccol = 0;
     max_char_col = width/8;
-    max_char_row = height/8;
-    fbfill(0xAAAAAA);
+    max_char_row = height/16;
+    fbfill(0);
     cccol+=99;
     fg_color=0x221122;
     bg_color=0xAAAAAA;
     ttyputchars("tawagoto sux. w nights spider\n");
-    bg_color = 0x0000FF;
+    bg_color = 0x000000;
     fg_color = 0xFFFFFF;
 }
 
@@ -73,10 +75,10 @@ void fbclear() {
 
 void ttydrawchar(char c, _uint x, _uint y) {
     outb(0xE9, c);
-    for (int i = 0; i < 8; i++) {
-        char charrow = font8x8_basic[c][i];
+    for (int i = 0; i < 16; i++) {
+        char charrow = font8x16[c][i];
         for (int ii = 0; ii < 8; ii++) {
-            if(((charrow >> ii)&1) != 0) {
+            if(((charrow >> (7-ii))&1) != 0) {
                 fbdrawpx(x+ii, y+i, fg_color);
             } else {
                 fbdrawpx(x+ii, y+i, bg_color);
@@ -104,7 +106,11 @@ void ttyputchar(char c) {
         ccrow = 0;
         cccol = 0;
     }
-    ttydrawchar(c, cccol++*8, ccrow*8);
+    if(c == '\t') {
+        cccol+=4;
+        return;
+    }
+    ttydrawchar(c, cccol++*8, ccrow*16);
 }
 
 void ttyputchars(char* cs) {

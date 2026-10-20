@@ -3,8 +3,8 @@
 #include "boot/multiboot.h"
 #include "tglib/tgtype.h"
 
-// credits to Daniel Hepper for the 8x8 font
-// github.com/dhepper/font8x8
+// credits to hubenchang0515 for the 8x16 font
+// github.com/hubenchang0515/font8x16
 
 // may be changed in the future
 #define RGB_TO_COLOR(r, g, b) \
