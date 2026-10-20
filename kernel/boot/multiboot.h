@@ -27,9 +27,9 @@ typedef struct {
     _uint32 framebuffer_pitch;
     _uint32 framebuffer_width;
     _uint32 framebuffer_height;
-    uint8_t  framebuffer_bpp;
-    uint8_t  framebuffer_type;
-    uint8_t  color_info[6];
+    _uint8  framebuffer_bpp;
+    _uint8  framebuffer_type;
+    _uint8  color_info[6];
 } __attribute__((packed)) multiboot_info_t;
 struct mmap_entry {
     _uint32 size;
