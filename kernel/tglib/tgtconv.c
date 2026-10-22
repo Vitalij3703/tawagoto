@@ -13,17 +13,19 @@ int sti(char* s) {
     return neg ? -result : result;
 }
 
-#define itc(i) ((char)(i + '0'))
-
 void its(int i, char* str) {
-    *str = i < 0 ? '-' : ' '; str[12] = '\0';
-    int ii = i < 0 ? 1 : 0;
-    int result = i;
-    while(result != 0){
-        str[ii] = itc(result % 10);
-        result /= 10;
-        ii++;
+    unsigned int u = i < 0 ? 0u - (unsigned int)i : (unsigned int)i;
+    int n = 0;
+    if (i < 0) str[n++] = '-';
+    int start = n;
+    do {
+        str[n++] = '0' + (u % 10);
+        u /= 10;
+    } while (u != 0);
+    str[n] = '\0';
+    for (int a = start, b = n - 1; a < b; a++, b--) {
+        char t = str[a];
+        str[a] = str[b];
+        str[b] = t;
     }
-    strrvr(str);
-    if(i == 0) str[0] = '0';
 }

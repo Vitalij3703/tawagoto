@@ -2,7 +2,6 @@
 #include "tglib/tgstr.h"
 #include "tglib/tgtype.h"
 
-// very simple cuz it's too early to optimize
 
 _size_t strlen(char* str) {
     for (_size_t i = 0;; i++){
@@ -59,6 +58,7 @@ int strchr(char* s, char c) {
 }
 
 // if this function doesnt work, ask past me (08/09/26, alsmots 9pm) what the fuck it's supposed to do
+// what the fuck is this supposed to do
 int strrchr(char* s, char c) {
     _uint i = 0;
     while(*s) {
