@@ -1,4 +1,5 @@
 #include "proc/proc.h"
+#include "proc.h"
 #include "tglib/tgtype.h"
 #include "mem/tgkmem.h"
 #include "mem/tgkheap.h"
@@ -49,6 +50,7 @@ void thread_push(struct thread* t) {
         ttail->next = thead;
         thead->prev = ttail;
     } else {
+        t->prev = ttail;
         ttail->next = t;
         ttail = t;
         ttail->next = thead;
@@ -81,6 +83,8 @@ void thread_free(struct thread* t) {
     irqrestore(v);
 }
 
+extern struct thread* focus;
+
 void thread_kill(_uint tid) {
     _uint32 v = irqsave();
     struct thread* t = thead;
@@ -95,26 +99,35 @@ void thread_kill(_uint tid) {
         irqrestore(v);
         return;
     }
+    if(t->keyowning) {
+        t->keyowning = 0;
+        focus = find_last_keyowning();
+    }
     set_thread_state(t, PROC_HALFDEAD);
-    if(tcurr == t) thread_yield(t);
     irqrestore(v);
+    if(tcurr == t) thread_yield(t);
 }
-
-// a reaper process will destroy all the zombies
 
 void thread_yield(struct thread* t) {
     _uint32 v = irqsave();
-    if(get_thread_state(t->next) == PROC_HALFDEAD) thread_yield(t->next);
-    ttail->next = t;
-    t->next->prev = t->prev;
+    if (t == ttail || t == thead || t->next == t) { // already last or boot
+        irqrestore(v);
+        return;
+    }
     t->prev->next = t->next;
+    t->next->prev = t->prev;
+    t->prev = ttail;
     t->next = thead;
+    ttail->next = t;
+    thead->prev = t;
     ttail = t;
     irqrestore(v);
 }
 
 void thread_stop(int status) {
     thread_kill(tcurr->tid);
+    for(;;)
+        asm volatile ("hlt");
 }
 
 void thread_jumpto(void) {
@@ -170,11 +183,11 @@ int isalive(struct thread* t) {
 
 struct thread* find_last_keyowning() {
     struct thread* t = ttail;
-    while(t->keyowning!=1
-        &&!(isalive(t))) {
+    while(!isalive(t) || t->keyowning!=1) {
         t = t->prev;
-        if(t == ttail)
+        if(t == ttail) {
             return NULL;
+        }
     }
     return t;
 }
@@ -211,9 +224,14 @@ struct thread* initial_thread_create(_uint32 func, void* argument) {
 int reap_threads() {
     struct thread* t = thead;
     for(;;) {
-        if(get_thread_state(t) == PROC_HALFDEAD)
+        t = t->next; // thead is always the boot thread
+        if(get_thread_state(t) == PROC_HALFDEAD) {
+            set_thread_state(t, PROC_DEAD);
+            if (t == ttail) ttail = t->prev;
+            t->next->prev = t->prev;
+            t->prev->next = t->next;
             thread_free(t);
-        t = t->next;
+        }
     }
     return 0;
 }

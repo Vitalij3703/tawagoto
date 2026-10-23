@@ -1,5 +1,6 @@
 #include "tglib/tgtconv.h"
 #include "tglib/tgstr.h"
+#include "mem/tgkheap.h"
 
 #define cti(c) ((int)c - '0')
 
@@ -28,4 +29,10 @@ void its(int i, char* str) {
         str[a] = str[b];
         str[b] = t;
     }
+}
+
+char* aits(int i) {
+    char* buf = kmalloc(13);
+    its(i, buf);
+    return buf;
 }

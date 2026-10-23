@@ -16,7 +16,7 @@ void _tgkexception(struct iframe *f) {
         "Overflow", //5
         "Bound range exceeded", //6
         "Invalid opcode", //7
-        "Device nit available", //8
+        "Device not available", //8
         "Double fault", //9
         "Coprocessor segment overrun", //10
         "Invalid TTS", //11
@@ -68,9 +68,9 @@ void _tgkinterrupt(struct iframe *f) {
             outb(0x20, 0x20);
             if(thead == NULL) _tgkpanic("No thread to execute!");
             if(tcurr == NULL) tcurr = thead;
-            if(slt==maxtime) {
+            if(slt>=maxtime) {
                 slt=0;
-                //ttyputchar('S');
+                //ttyputchar(*aits(focus->tid));
                 thread_switch(find_next_ready());
             }
         }

@@ -19,11 +19,9 @@
 
 #define HMSG "commands:\n\techo [args] : output args\n\ttest : output a test message\n\ttest_wait : test the timer driver\n\ttest_bit : test physical mem alloc\n\ttest_virtual : test virtual memory mappings\n\ttest_malloc : test kmalloc() and kmfree()\n\tclear : clear the screen\n\thelp : output this message\n\tq : quit"
 
-int state = 0;
-
-void exec(char* cmd) {
+int exec(char* cmd) {
     if(*cmd == 0)
-        return;
+        return 0;
     int argc = 0;
     char* args[32];
     char* p = cmd;
@@ -47,16 +45,16 @@ void exec(char* cmd) {
             ttyputchar(' ');
         }
         ttyputchar('\n');
-        return;
+        return 0;
     }
     else if(strcmp("test", args[0]) == 0) {
         ttyputchars("This is a test message. hewwo wowd\n");
-        return;
+        return 0;
     }
     else if(strcmp("help", args[0]) == 0) {
         ttyputchars(HMSG);
         ttyputchar('\n');
-        return;
+        return 0;
     }
     else if(strcmp("panic", args[0]) == 0) {
         char** p = args+1;
@@ -73,17 +71,17 @@ void exec(char* cmd) {
             }
         }
         _tgkpanic(format("%\n\n\t(User-PSh-induced panic)", result));
-        return;
+        return 0;
     }
     else if(strcmp("test_wait", args[0]) == 0) {
         ttyputchars("testing tsleep()\n");
         tsleep(S_TO_MS(2));
         ttyputchars("done\n");
-        return;
+        return 0;
     }
     else if(strcmp("clear", args[0]) == 0) {
         fbclear();
-        return;
+        return 0;
     }
     else if(strcmp("test_bit", args[0]) == 0) {
         ttyputchars("testing bitmap\n");
@@ -96,7 +94,7 @@ void exec(char* cmd) {
         }
         tgkfreepages(pages[0], 100);
         ttyputchars("\ndone\n");
-        return;
+        return 0;
     }
     else if(strcmp("test_virtual", args[0]) == 0) {
         ttyputchars("testing virtual memory\n");
@@ -104,7 +102,7 @@ void exec(char* cmd) {
         map_page((_uint32)test, 0x800000, 0x003);
         ttyputchars((char*)0x800000);
         ttyputchars("\ndone\n");
-        return;
+        return 0;
     }
     else if(strcmp("test_malloc", args[0]) == 0) {
         ttyputchars("testing memory heap allocation\n");
@@ -114,34 +112,35 @@ void exec(char* cmd) {
         ttyputcharsf("address: %\nsize: %\n", addr, size);
         kmfree(str);
         ttyputchars("done\n");
-        return;
+        return 0;
     }
     else if(strcmp("psh", args[0]) == 0) {
         ttyputchars("recurse\n\n");
         struct thread* r = thread_create((_uint32)__psh, NULL, NULL);
         make_thread_keyowning(r);
         //thread_kill(r->tid);
-        return;
+        while(get_thread_state(r) != PROC_HALFDEAD);
+        return 0;
     }
     else if(strcmp("q", args[0]) == 0) {
-        state = 1;
-        return;
+        return 1;
     }
     else {
         ttyputcharsf("Invalid command '%'! Do 'help'\n", args[0]);
-        return;
+        return 0;
     }
     
 }
 
 int __psh(struct sys_info info) {
     ttyputcharsf("\nos: %\nshell: primitive shell (PSh)\nmem: %MiB\n\n", info.os, info.mem);
-    while(!state) {
+    for(;;) {
         char buf[256];
         ttyputchars("PSh ::> ");
         kkreadline(buf);
-        exec(buf);
+        if(exec(buf))
+            break;
     }
-    ttyputchars("quitting primitive shell...\n");
+    ttyputchars("\nquitting primitive shell...\n\n");
     return 0;
 }

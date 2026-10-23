@@ -32,7 +32,7 @@ nasm -f elf32 ../kernel/proc/sctx.asm -o sctx.o
 nasm -f elf32 ../kernel/mem/pageutil.asm -o putil.o
 i686-elf-gcc -T ../kernel/boot/linker.ld -o tg.bin -ffreestanding -O0 -nostdlib *.o -lgcc -g
 cp tg.bin ../iso/boot/tg.bin
-grub-mkrescue -o tg.iso ../iso
+grub2-mkrescue -o tg.iso ../iso # change grub2 to grub if this command doesnt exist on your system
 
 #vm
 cd ..

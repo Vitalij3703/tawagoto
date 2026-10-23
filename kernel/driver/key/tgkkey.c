@@ -172,7 +172,6 @@ _uint8 sd;
 struct thread* focus = NULL;
 
 char _tgkkcstk(_uint8 scan) {
-    focus = find_last_keyowning();
     while(tcurr != focus);
     if(scan > RELEASE_OFFSET) {
         if(keys[scan - RELEASE_OFFSET].key == '\4')
@@ -237,6 +236,7 @@ char kkgetchar() {
 }
 
 void kkreadline(char* buf) {
+    focus = find_last_keyowning();
     char ckeyc = ' ';
     _uint ckeyi = 0;
     while(ckeyc != '\n') {
@@ -258,6 +258,7 @@ void kkreadline(char* buf) {
 }
 
 void kkreadlinen(char* buf, _uint n) {
+    focus = find_last_keyowning();
     char ckeyc;
     _uint ckeyi = 0;
     while(ckeyi != n) {
