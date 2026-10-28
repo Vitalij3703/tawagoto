@@ -8,6 +8,8 @@
 #define FONT8x16_IMPLEMENTATION
 #include "tty/font8x16/font8x16.h"
 
+// TODO: remove this once the os has it
+
 _uint8* fb;
 _uint32  fbend;
 _uint ccrow; // y
@@ -85,7 +87,7 @@ void ttydrawchar(char c, _uint x, _uint y) {
             }
         }
     }
-    
+
 }
 
 void ttyputchar(char c) {

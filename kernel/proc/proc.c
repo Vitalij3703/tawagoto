@@ -8,6 +8,7 @@
 #include "mem/tgkvmem.h"
 #include "tty/tty.h"
 #include "tglib/tgtconv.h"
+#include "mem/tgkvmem.h"
 
 struct thread* thead;
 struct thread* ttail;
@@ -278,36 +279,94 @@ struct process* phead;
 struct process* ptail;
 struct process* pcurr;
 
+#define USERSPACE_START_PDE 256
+#define USERSPACE_END_PDE 960
+
 // create a new page directory with the kernel part shared
 _uint32* addrspacenew() {
     _uint32* newdir = (_uint32*)tgkallocpage();
-    if(newdir == PAGEFAIL) return NULL;
+    if(newdir == PAGEFAIL) return (_uint32*)PAGEFAIL;
     memset((_uint8*)newdir, 0, PAGESIZE);
-    for(_uint32 i = 0; i < 1024; i++) {
-        _uint32 page_table = page_direc[i];
-        newdir[i] = page_table;
+    // copy the first kernel part
+    for(_uint32 i = 0; i < USERSPACE_START_PDE; i++) {
+        _uint32 entry = page_direc[i];
+        newdir[i] = entry;
     }
-    for(_uint32 i = 0; i < 1024; i++) {
-        _uint32 page_table = newdir[i];
-        newdir[i] = page_table;
+    // copy the second kernel part (where the framebuffer is located)
+    for(_uint32 i = USERSPACE_END_PDE; i < 1024; i++) {
+        _uint32 entry = page_direc[i];
+        newdir[i] = entry;
     }
     return newdir;
 }
 
-struct process* proc_create(char* name, 
-                            char* from, 
-                            int isroot, 
-                            struct process* parent,
-                            _uint32 func) {
-    
+// extern _uint32* page_direc;
+
+// free a page directory
+void addrspacefree(_uint32* dir) {
+    if(dir == PAGEFAIL) return;
+    if(dir == page_direc) return;
+    // the reaper will load the kernel directory
+    for(_uint32 i = USERSPACE_START_PDE; i < USERSPACE_END_PDE; i++) {
+        _uint32 entry = dir[i] & ~0xFFF;
+        if(entry == 0) continue;
+        if((entry & (1 << /*flag*/PRESENT)) == 0) continue;
+        for(_uint32 ii = 0; ii < 1024; ii++) {
+            _uint32 table = ((_uint32*)entry)[ii] & ~0xFFF;
+            if(table == 0) continue;
+            if((table & (1 << /*flag*/PRESENT)) == 0) continue;
+            tgkfreepage(table);
+        }
+        tgkfreepage(entry);
+    }
+    tgkfreepage((_uint32)dir);
 }
 
-void set_process_state(struct process* proc, PROC_STATE state) {
-    proc->state = state;
+// push a process onto the linked list
+void push_process(struct process* p) {
+    _uint32 v = irqsave();
+    if(phead == NULL) {
+        phead = p;
+        ptail = p;
+        ptail->next = phead;
+        phead->prev = ptail;
+    } else {
+        p->prev = ptail;
+        ptail->next = p;
+        ptail = p;
+        ptail->next = phead;
+        phead->prev = ptail;
+    }
+    irqrestore(v);
+}
+
+// find a process with pid [1]
+struct process* process_get(_uint /*[1]*/pid) {
+    struct process* p = phead;
+    while(p->pid!=pid) {
+        p = p->next;
+        if(p == phead)
+            return NULL;
+    }
+    return p;
+}
+
+// obviously create a process
+struct process* proc_create(char* name,
+                            char* from,
+                            int isroot,
+                            struct process* parent,
+                            _uint32 func) {
+
+}
+
+// set the state of process [1] to [2]
+void set_process_state(struct process* /*[1]*/proc, PROC_STATE /*[2]*/state) {
     proc->root_thread->state = state;
 }
 
-void proc_kill(int pid) {
+// kill the process with pid [1]
+void proc_kill(int /*[1]*/pid) {
     _uint32 v = irqsave();
     struct process* p = phead;
     while(p->pid!=pid) {

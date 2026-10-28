@@ -50,7 +50,6 @@ struct process {
     char* name;
     char* from;
     _uint32* page_direc;
-    PROC_STATE state;
     struct thread* root_thread;
     PROC_OWNER owner;
     struct process* parent; // if it is the parent, set to NULL
@@ -84,9 +83,9 @@ extern struct process* phead;
 extern struct process* ptail;
 extern struct process* pcurr;
 
-struct process* proc_create(char* name, 
-                            char* from, 
-                            int isroot, 
+struct process* proc_create(char* name,
+                            char* from,
+                            int isroot,
                             struct process* parent,
                             _uint32 func);
 
@@ -97,7 +96,5 @@ void proc_exit(int err);
 void proc_kill(int pid); // thread_kill(p->root)
 
 struct process* proc_get(int pid);
-
-struct process* proc_cur();
 
 #endif

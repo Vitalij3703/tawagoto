@@ -1,9 +1,6 @@
 
 #include "mem/tgkvmem.h"
 #include "mem/tgkmem.h"
-//define entry(addr, flags) ((addr << 12) | flags)
-//void vmeminit(multiboot_info_t* info);
-//_uint32 mmap(_uint bytes, _uint flags);
 #include "boot/multiboot.h"
 #include "tglib/tgtype.h"
 #include "tglib/tgstr.h"
@@ -24,6 +21,7 @@ void vmeminit(multiboot_info_t* info) {
         _tgkpanic("Failed to initialize virtual memory.\nReboot.");
     int flag = DEFAULT_ROOT;
     for (_uint32 i = 0; i < 1024; i++) {
+        // TODO: rename this. it doesnt matter right now
         _uint32* page_table = (_uint32*)tgkallocpage();
         for (_uint32 ii = 0; ii < 1024; ii++) {
             if((i*1024+ii)*PAGESIZE >= USERSPACE_ADDR
@@ -48,7 +46,7 @@ void vmeminit(multiboot_info_t* info) {
         fb = fb + FB_MOVE_ADDR;
     } else
         ttyputchars(":- framebuffer move not needed\n");
-    
+
     enablepaging(page_direc);
 }
 

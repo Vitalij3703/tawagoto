@@ -117,7 +117,7 @@ void _tgkmain(_size32 magic, multiboot_info_t* mbi) {
     its(TAWAGOTO_VERSION, ver);
     char mem[13];
     its((mbi->mem_lower + mbi->mem_upper)/1024, mem);
-    ttyputcharsf("tawagoto kernel v%\n\tby solez\n", ver);
+    ttyputcharsf("tawakernel v%\n\tby solez\n", ver);
     ttyputcharsf(":- fb addr %\n", fbaddr);
     ttyputcharsf(":- mem % MiB\n", mem);
     ttyputchars(":- initialized framebuffer output\n");

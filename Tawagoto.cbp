@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Tawagoto" />
+		<Option pch_mode="2" />
+		<Option compiler="null" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/Tawagoto" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="null" />
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/Tawagoto" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="null" />
+			</Target>
+		</Build>
+		<Unit filename="kernel/bin/for.txt" />
+		<Unit filename="kernel/bin/psh/about.txt" />
+		<Unit filename="kernel/bin/psh/psh.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/bin/psh/psh.h" />
+		<Unit filename="kernel/boot/linker.ld" />
+		<Unit filename="kernel/boot/multiboot.h" />
+		<Unit filename="kernel/boot/tgboot.asm" />
+		<Unit filename="kernel/driver/key/about.txt" />
+		<Unit filename="kernel/driver/key/tgkkey.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/driver/key/tgkkey.h" />
+		<Unit filename="kernel/driver/template/DRIVER.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/driver/template/DRIVER.h" />
+		<Unit filename="kernel/driver/template/about.txt" />
+		<Unit filename="kernel/driver/timer/about.txt" />
+		<Unit filename="kernel/driver/timer/timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/driver/timer/timer.h" />
+		<Unit filename="kernel/is.asm" />
+		<Unit filename="kernel/mem/pageutil.asm" />
+		<Unit filename="kernel/mem/tgkheap.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/mem/tgkheap.h" />
+		<Unit filename="kernel/mem/tgkmem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/mem/tgkmem.h" />
+		<Unit filename="kernel/mem/tgkvmem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/mem/tgkvmem.h" />
+		<Unit filename="kernel/proc/proc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/proc/proc.h" />
+		<Unit filename="kernel/proc/sctx.asm" />
+		<Unit filename="kernel/tgkernel.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/tgkernel.h" />
+		<Unit filename="kernel/tgkgdt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/tgkgdt.h" />
+		<Unit filename="kernel/tgkidt.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/tgkidt.h" />
+		<Unit filename="kernel/tglib/tgmem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/tglib/tgmem.h" />
+		<Unit filename="kernel/tglib/tgstr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/tglib/tgstr.h" />
+		<Unit filename="kernel/tglib/tgtconv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/tglib/tgtconv.h" />
+		<Unit filename="kernel/tglib/tgtype.h" />
+		<Unit filename="kernel/tty/tty.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="kernel/tty/tty.h" />
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
